@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
-class Orders extends StatelessWidget {
+class Orders extends StatefulWidget {
+  const Orders({super.key});
+
+  @override
+  State<Orders> createState() => _OrdersState();
+}
+
+class _OrdersState extends State<Orders> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(title: Text("Orders")),
-      body: Center(child: Text("Orders Page")),
-    );
+    return const Placeholder();
   }
 }

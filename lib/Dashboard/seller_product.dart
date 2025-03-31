@@ -160,6 +160,7 @@ class _SellerProductState extends State<SellerProduct> {
                   var product = filteredProducts[index];
 
                   return Card(
+                    color: Colors.white,
                     elevation: 5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -238,7 +239,7 @@ class _SellerProductState extends State<SellerProduct> {
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w300,
+                                  fontWeight: FontWeight.w900,
                                 ),
                               ),
                             ),

@@ -12,7 +12,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [Home(), Orders(), Cart(), Profile()];
+  final List<Widget> _screens = [Home(), Orders(), Cart(), ProfilePage()];
 
   void _onItemTapped(int index) {
     setState(() {

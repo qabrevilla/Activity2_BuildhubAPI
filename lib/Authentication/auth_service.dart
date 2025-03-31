@@ -1,46 +1,38 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-class AuthService {
-  static Future<bool> login(
-    String email,
-    String password,
-    bool rememberMe,
-    BuildContext context,
-  ) async {
+class LoginApi {
+  Future<Map<String, dynamic>> login(String email, String password) async {
     final url = Uri.parse('https://api.buildhubware.com/api/v1/accounts/login');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-        'rememberMe': rememberMe,
-      }),
-    );
+    final headers = <String, String>{'Content-Type': 'application/json'};
+    final body = jsonEncode(<String, String>{
+      'email': email,
+      'password': password,
+    });
 
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Login Successful')));
-      return true;
-    } else {
-      String errorMessage = 'Login Failed';
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      debugPrint("Response status: ${response.statusCode}");
+      debugPrint("Response body: ${response.body}");
 
-      try {
-        final data = jsonDecode(response.body);
-        if (data['message'] != null) {
-          errorMessage = data['message'];
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        if (responseData.containsKey('token')) {
+          return {'success': true, 'token': responseData['token']};
+        } else {
+          return {'success': false, 'message': 'Invalid response from server'};
         }
-      } catch (e) {
-        // nothing
+      } else {
+        return {
+          'success': false,
+          'message': responseData['message'] ?? 'Invalid credentials',
+        };
       }
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorMessage)));
-      return false;
+    } catch (e) {
+      debugPrint("Login error: $e");
+      return {'success': false, 'message': 'Network error: $e'};
     }
   }
 }

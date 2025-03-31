@@ -1,6 +1,6 @@
 import 'package:activity2_api/Main/main_page.dart';
 import 'package:flutter/material.dart';
-import '/Authentication/auth_service.dart';
+import 'package:activity2_api/Authentication/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -30,16 +30,23 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> login() async {
-    final success = await AuthService.login(
-      emailController.text,
+    final api = LoginApi();
+    final response = await api.login(
+      emailController
+          .text, // Now correctly sending "email" instead of "username"
       passwordController.text,
-      rememberMe,
-      context,
     );
-    if (success) {
+
+    debugPrint("API Response: $response"); // Debugging
+
+    if (response['success']) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => MainScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response['message'] ?? 'Login failed')),
       );
     }
   }
@@ -64,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                 controller: emailController,
                 focusNode: emailFocusNode,
                 decoration: InputDecoration(
-                  hintText: 'Email',
+                  hintText: 'Username', // Changed to match API
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -134,9 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromRGBO(157, 0, 1, 1.0),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        8,
-                      ), // Slightly curved corners
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: Text('Log in', style: TextStyle(color: Colors.white)),
