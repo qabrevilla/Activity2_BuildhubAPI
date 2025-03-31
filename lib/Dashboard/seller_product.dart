@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:activity2_api/Dashboard/quickview.dart';
 
 class SellerProduct extends StatefulWidget {
-  //stateful
   final dynamic seller;
 
   const SellerProduct({Key? key, required this.seller}) : super(key: key);

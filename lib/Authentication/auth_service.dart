@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class LoginApi {
@@ -13,13 +12,14 @@ class LoginApi {
 
     try {
       final response = await http.post(url, headers: headers, body: body);
-      debugPrint("Response status: ${response.statusCode}");
-      debugPrint("Response body: ${response.body}");
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
 
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       if (response.statusCode == 200) {
         if (responseData.containsKey('token')) {
+          print("Login successful! Token: ${responseData['token']}");
           return {'success': true, 'token': responseData['token']};
         } else {
           return {'success': false, 'message': 'Invalid response from server'};
@@ -31,7 +31,7 @@ class LoginApi {
         };
       }
     } catch (e) {
-      debugPrint("Login error: $e");
+      print("Login error: $e");
       return {'success': false, 'message': 'Network error: $e'};
     }
   }

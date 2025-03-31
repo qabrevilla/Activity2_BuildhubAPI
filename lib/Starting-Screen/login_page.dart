@@ -32,8 +32,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> login() async {
     final api = LoginApi();
     final response = await api.login(
-      emailController
-          .text, // Now correctly sending "email" instead of "username"
+      emailController.text,
       passwordController.text,
     );
 
@@ -71,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                 controller: emailController,
                 focusNode: emailFocusNode,
                 decoration: InputDecoration(
-                  hintText: 'Username', // Changed to match API
+                  hintText: 'Username',
                   border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(

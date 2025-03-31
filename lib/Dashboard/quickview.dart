@@ -10,12 +10,12 @@ class QuickView extends StatefulWidget {
 }
 
 class _QuickViewState extends State<QuickView> {
-  int quantity = 600; // Default quantity
+  int quantity = 600;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8, // Set modal height
+      height: MediaQuery.of(context).size.height * 0.8,
       padding: const EdgeInsets.all(16.0),
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -23,7 +23,7 @@ class _QuickViewState extends State<QuickView> {
       ),
       child: Column(
         children: [
-          // Row for X button & Drag Handle
+          // X Button
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -172,7 +172,7 @@ class _QuickViewState extends State<QuickView> {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        // Implement Add to Cart Functionality Here
+                        // Add to Cart functionality
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color.fromRGBO(157, 0, 1, 1.0),
