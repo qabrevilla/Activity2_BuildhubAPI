@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'seller_product.dart';
 
 class Sellers extends StatefulWidget {
@@ -12,7 +13,10 @@ class Sellers extends StatefulWidget {
 
 class _SellersState extends State<Sellers> {
   List<dynamic> sellers = [];
+  List<dynamic> filteredSellers = [];
   bool isLoading = true;
+  String selectedFilter = "Nearby";
+  String searchQuery = "";
 
   @override
   void initState() {
@@ -29,11 +33,20 @@ class _SellersState extends State<Sellers> {
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
-      setState(() => sellers = json['response'] ?? []);
+      setState(() {
+        sellers = json['response'] ?? [];
+        filteredSellers = sellers;
+      });
     } else {
       print('Failed to fetch sellers');
     }
     setState(() => isLoading = false);
+  }
+
+  void toggleFilter(String filter) {
+    setState(() {
+      selectedFilter = filter;
+    });
   }
 
   void navigateToSeller(BuildContext context, dynamic seller) {
@@ -56,6 +69,17 @@ class _SellersState extends State<Sellers> {
     );
   }
 
+  void filterSellers(String query) {
+    setState(() {
+      searchQuery = query;
+      filteredSellers =
+          sellers.where((seller) {
+            final name = seller['name'].toLowerCase();
+            return name.contains(query.toLowerCase());
+          }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,53 +89,83 @@ class _SellersState extends State<Sellers> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "Search Sellers",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide: const BorderSide(color: Colors.grey, width: 1.5),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  borderSide: const BorderSide(
-                    color: Color.fromRGBO(157, 0, 1, 1.0),
-                    width: 1.5,
+            child: Column(
+              children: [
+                TextField(
+                  onChanged: (query) => filterSellers(query),
+                  decoration: InputDecoration(
+                    hintText: "Search Sellers",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: const BorderSide(
+                        color: Color.fromRGBO(157, 0, 1, 1.0),
+                        width: 1.5,
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 15,
+                    ),
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.refresh, color: Colors.black),
+                          onPressed: fetchSellers,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.search, color: Colors.black),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 15,
-                ),
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
+                const SizedBox(height: 10),
+                Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.refresh, color: Colors.black),
-                      onPressed: fetchSellers,
+                    Expanded(
+                      child: _buildFilterButton(
+                        "Nearby",
+                        selectedFilter == "Nearby",
+                        () => toggleFilter("Nearby"),
+                        icon: Icons.location_on,
+                      ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.search, color: Colors.black),
-                      onPressed: () {},
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _buildFilterButton(
+                        "Global",
+                        selectedFilter == "Global",
+                        () => toggleFilter("Global"),
+                        icon: Icons.public,
+                      ),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
           ),
           isLoading
               ? const Expanded(
                 child: Center(child: CircularProgressIndicator()),
               )
-              : sellers.isEmpty
+              : filteredSellers.isEmpty
               ? const Expanded(
                 child: Center(child: Text("No Sellers Available")),
               )
               : Expanded(
                 child: ListView.builder(
-                  itemCount: sellers.length,
+                  itemCount: filteredSellers.length,
                   itemBuilder: (context, index) {
-                    final seller = sellers[index];
+                    final seller = filteredSellers[index];
                     return GestureDetector(
                       onTap: () => navigateToSeller(context, seller),
                       child: Padding(
@@ -125,13 +179,23 @@ class _SellersState extends State<Sellers> {
                                     seller['logo'].isNotEmpty)
                                   Padding(
                                     padding: const EdgeInsets.only(right: 10),
-                                    child: Image.network(
-                                      seller['logo'],
+                                    child: CachedNetworkImage(
+                                      imageUrl: seller['logo'],
                                       width: 50,
                                       height: 50,
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
+                                      placeholder:
+                                          (context, url) => const SizedBox(
+                                            width: 50,
+                                            height: 50,
+                                            child: Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              ),
+                                            ),
+                                          ),
+                                      errorWidget:
+                                          (context, url, error) =>
                                               const Icon(Icons.error),
                                     ),
                                   ),
@@ -202,13 +266,24 @@ class _SellersState extends State<Sellers> {
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 5,
                                         ),
-                                        child: Image.network(
-                                          product['photo'] ?? '',
+                                        child: CachedNetworkImage(
+                                          imageUrl: product['photo'] ?? '',
                                           width: 80,
                                           height: 80,
                                           fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) =>
+                                          placeholder:
+                                              (context, url) => const SizedBox(
+                                                width: 80,
+                                                height: 80,
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                      ),
+                                                ),
+                                              ),
+                                          errorWidget:
+                                              (context, url, error) =>
                                                   const Icon(Icons.error),
                                         ),
                                       ),
@@ -225,6 +300,67 @@ class _SellersState extends State<Sellers> {
                 ),
               ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFilterButton(
+    String label,
+    bool isChecked,
+    VoidCallback onTap, {
+    required IconData icon,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              offset: Offset(0, 4),
+              blurRadius: 2,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color:
+                      isChecked ? Color.fromRGBO(157, 0, 1, 1.0) : Colors.black,
+                  width: 2,
+                ),
+              ),
+              child: Center(
+                child:
+                    isChecked
+                        ? Container(
+                          width: 10,
+                          height: 10,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromRGBO(157, 0, 1, 1.0),
+                          ),
+                        )
+                        : null,
+              ),
+            ),
+            const SizedBox(width: 20),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(width: 10),
+            Icon(icon, size: 18, color: Color.fromRGBO(157, 0, 1, 1.0)),
+          ],
+        ),
       ),
     );
   }
