@@ -21,29 +21,14 @@ class _SellerProductState extends State<SellerProduct> {
   String? selectedCategory = 'All';
   String? selectedSort = 'Highest Price';
 
+  int _visibleProductCount = 10; // Initial visible products
+  final int _loadMoreCount = 4; // How many to load on each tap
+
   @override
   void initState() {
     super.initState();
     products = widget.seller['products'] ?? [];
     filteredProducts = products;
-  }
-
-  Future<List<dynamic>> fetchSellerProducts() async {
-    final url =
-        'https://api.buildhubware.com/api/v1.1/sellers-company?page=1&limit=0&sellerCompanyLimit=10&lng&lat&globalSearch=true';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return data['products'] ?? [];
-      } else {
-        throw Exception('Failed to load products');
-      }
-    } catch (e) {
-      throw Exception('Failed to load products: $e');
-    }
   }
 
   void _filterProducts(String query) {
@@ -56,8 +41,12 @@ class _SellerProductState extends State<SellerProduct> {
                 ),
               )
               .toList();
+      _visibleProductCount = 10; // Reset visible count when searching
     });
   }
+
+  List<dynamic> get _visibleProducts =>
+      filteredProducts.take(_visibleProductCount).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -208,7 +197,10 @@ class _SellerProductState extends State<SellerProduct> {
                               Icons.refresh,
                               color: Colors.black,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              searchController.clear();
+                              _filterProducts('');
+                            },
                           ),
                           IconButton(
                             icon: const Icon(Icons.search, color: Colors.black),
@@ -296,15 +288,14 @@ class _SellerProductState extends State<SellerProduct> {
                   const SizedBox(height: 10),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      // Adjust card width and height
                       double cardWidth = (constraints.maxWidth - 10) / 2;
-                      double cardHeight = 250; // Adjust as needed
+                      double cardHeight = 250;
                       double aspectRatio = cardWidth / cardHeight;
 
                       return GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: filteredProducts.length,
+                        itemCount: _visibleProducts.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
@@ -312,7 +303,7 @@ class _SellerProductState extends State<SellerProduct> {
                           childAspectRatio: aspectRatio,
                         ),
                         itemBuilder: (context, index) {
-                          var product = filteredProducts[index];
+                          var product = _visibleProducts[index];
                           return Card(
                             color: Colors.white,
                             elevation: 5,
@@ -438,6 +429,33 @@ class _SellerProductState extends State<SellerProduct> {
                       );
                     },
                   ),
+
+                  const SizedBox(height: 60),
+
+                  // 👇 View More Button
+                  if (_visibleProductCount < filteredProducts.length)
+                    Align(
+                      alignment:
+                          Alignment.centerLeft, // Aligns the button to the left
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _visibleProductCount = (_visibleProductCount +
+                                    _loadMoreCount)
+                                .clamp(0, filteredProducts.length);
+                          });
+                        },
+                        child: const Text(
+                          '    View More',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Color.fromRGBO(157, 0, 1, 1.0),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  const SizedBox(height: 60),
                 ],
               ),
             ),
