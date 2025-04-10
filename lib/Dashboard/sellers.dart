@@ -27,7 +27,7 @@ class _SellersState extends State<Sellers> {
   Future<void> fetchSellers() async {
     setState(() => isLoading = true);
     const url =
-        'https://api.buildhubware.com/api/v1.1/sellers-company?page=1&limit=0&sellerCompanyLimit=10&lng&lat&globalSearch=true';
+        'https://api.buildhubware.com/api/v1.1/sellers-company?page=1&limit=0&sellerCompanyLimit=0&lng&lat&globalSearch=true';
     final uri = Uri.parse(url);
     final response = await http.get(uri);
 

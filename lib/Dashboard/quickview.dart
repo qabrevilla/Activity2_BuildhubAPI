@@ -188,7 +188,7 @@ class _QuickViewState extends State<QuickView> {
     );
   }
 
-  // Show Custom Quantity Dialog
+  // Show Custom Quantity
   void _showCustomQuantityDialog() {
     showDialog(
       context: context,

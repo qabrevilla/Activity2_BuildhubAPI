@@ -21,8 +21,8 @@ class _SellerProductState extends State<SellerProduct> {
   String? selectedCategory = 'All';
   String? selectedSort = 'Highest Price';
 
-  int _visibleProductCount = 10; // Initial visible products
-  final int _loadMoreCount = 4; // How many to load on each tap
+  int _visibleProductCount = 10;
+  final int _loadMoreCount = 4;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _SellerProductState extends State<SellerProduct> {
                 ),
               )
               .toList();
-      _visibleProductCount = 10; // Reset visible count when searching
+      _visibleProductCount = 10;
     });
   }
 
@@ -432,7 +432,7 @@ class _SellerProductState extends State<SellerProduct> {
 
                   const SizedBox(height: 60),
 
-                  // 👇 View More Button
+                  //View More Button
                   if (_visibleProductCount < filteredProducts.length)
                     Align(
                       alignment:

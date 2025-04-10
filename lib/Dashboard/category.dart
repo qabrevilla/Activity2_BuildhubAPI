@@ -30,7 +30,6 @@ class _CategoryPageState extends State<CategoryPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Red header row
             Container(
               width: double.infinity,
               color: const Color.fromRGBO(157, 0, 1, 1.0),
@@ -62,7 +61,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   ),
                   const SizedBox(height: 10),
 
-                  // Carousel slider with visible images on the sides
+                  // Carousel slider
                   CarouselSlider(
                     options: CarouselOptions(
                       height: 100, // increase carousel height
@@ -72,8 +71,7 @@ class _CategoryPageState extends State<CategoryPage> {
                       autoPlayInterval: Duration(seconds: 1),
                       autoPlayAnimationDuration: Duration(milliseconds: 300),
                       autoPlayCurve: Curves.fastOutSlowIn,
-                      viewportFraction:
-                          0.6, // make visible portion a bit bigger
+                      viewportFraction: 0.6,
                     ),
 
                     items:
@@ -90,7 +88,7 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
             ),
 
-            // White container with grid
+            // Container for the grid view
             Container(
               color: Colors.white,
               padding: const EdgeInsets.all(16.0),

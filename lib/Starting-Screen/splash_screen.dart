@@ -25,8 +25,8 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(-1, 0), // Start from left
-      end: Offset.zero, // End at center
+      begin: const Offset(-1, 0),
+      end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _fadeAnimation = Tween<double>(
@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(const Duration(seconds: 3), () {
       Get.off(
-        () => LoginPage(), //ibalik sa splashscreen
+        () => LoginPage(),
         transition: Transition.rightToLeft,
         duration: const Duration(milliseconds: 600),
       );
