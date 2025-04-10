@@ -38,6 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Color.fromRGBO(157, 0, 1, 1.0),
+
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),

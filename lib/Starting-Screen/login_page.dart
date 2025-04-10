@@ -89,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: emailController,
                         focusNode: emailFocusNode,
                         decoration: InputDecoration(
-                          hintText: 'Username',
+                          hintText: 'Email',
                           border: OutlineInputBorder(),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -138,14 +138,18 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Row(
                             children: [
-                              Checkbox(
-                                activeColor: Color.fromRGBO(157, 0, 1, 1.0),
-                                value: rememberMe,
-                                onChanged: (value) {
-                                  setState(() {
-                                    rememberMe = value!;
-                                  });
-                                },
+                              Transform.scale(
+                                scale:
+                                    1.2, // Adjust the scale value to make it bigger or smaller
+                                child: Checkbox(
+                                  activeColor: Color.fromRGBO(157, 0, 1, 1.0),
+                                  value: rememberMe,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      rememberMe = value!;
+                                    });
+                                  },
+                                ),
                               ),
                               Text("Remember Me"),
                             ],
@@ -158,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 20),
                       SizedBox(
-                        height: 50,
+                        height: 60,
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: login,
@@ -170,7 +174,42 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: Text(
                             'Log in',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      SizedBox(
+                        height: 60,
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: //facebookLogin
+                              () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color.fromRGBO(16, 85, 181, 1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons
+                                    .facebook, // You can use the Facebook icon from the `flutter_icons` package or any custom icon
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ), // Add some space between the icon and the text
+                              Text(
+                                'Log in with Facebook',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:activity2_api/Dashboard/sellers.dart';
+import 'package:activity2_api/Dashboard/category.dart';
 import 'package:activity2_api/Text-Style/text_syle.dart';
 
 class Home extends StatefulWidget {
@@ -23,9 +24,10 @@ class _HomeState extends State<Home> {
     );
   }
 
+  //Pages
   final List<Widget> _pages = [
     Center(child: Text("Best Sellers Page")),
-    Center(child: Text("Category Page")),
+    CategoryPage(),
     Sellers(),
   ];
 
