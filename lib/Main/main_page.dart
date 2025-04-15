@@ -5,11 +5,13 @@ import 'package:activity2_api/Orders/orders_page.dart';
 import 'package:activity2_api/Dashboard/home_page.dart';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
-  _MainScreenState createState() => _MainScreenState();
+  MainScreenState createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [Home(), Orders(), Cart(), ProfilePage()];

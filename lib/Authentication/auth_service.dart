@@ -37,13 +37,16 @@ class LoginApi {
 
     try {
       final response = await http.post(url, headers: headers, body: body);
+      // ignore: avoid_print
       print("Response status: ${response.statusCode}");
+      // ignore: avoid_print
       print("Response body: ${response.body}");
 
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       if (response.statusCode == 200) {
         if (responseData.containsKey('token')) {
+          // ignore: avoid_print
           print("Login successful! Token: ${responseData['token']}");
           return {'success': true, 'token': responseData['token']};
         } else {
@@ -72,6 +75,7 @@ class LoginApi {
         }
       }
     } catch (e) {
+      // ignore: avoid_print
       print("Login error: $e");
       return {'success': false, 'message': 'Network error: $e'};
     }

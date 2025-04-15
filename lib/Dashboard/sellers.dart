@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
-import 'seller_product.dart';
+import 'package:activity2_api/Dashboard/seller_product.dart';
 
 class Sellers extends StatefulWidget {
-  const Sellers({Key? key}) : super(key: key);
+  const Sellers({super.key});
 
   @override
   State<Sellers> createState() => _SellersState();
@@ -25,6 +25,7 @@ class _SellersState extends State<Sellers> {
   }
 
   Future<void> fetchSellers() async {
+    //URI and headers
     setState(() => isLoading = true);
     const url =
         'https://api.buildhubware.com/api/v1.1/sellers-company?page=1&limit=0&sellerCompanyLimit=0&lng&lat&globalSearch=true';
@@ -38,6 +39,7 @@ class _SellersState extends State<Sellers> {
         filteredSellers = sellers;
       });
     } else {
+      // ignore: avoid_print
       print('Failed to fetch sellers');
     }
     setState(() => isLoading = false);
@@ -319,7 +321,7 @@ class _SellersState extends State<Sellers> {
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha(51),
               offset: Offset(0, 4),
               blurRadius: 2,
             ),

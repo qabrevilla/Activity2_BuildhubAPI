@@ -5,11 +5,13 @@ import 'package:activity2_api/Dashboard/category.dart';
 import 'package:activity2_api/Text-Style/text_syle.dart';
 
 class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
-  _HomeState createState() => _HomeState();
+  HomeState createState() => HomeState();
 }
 
-class _HomeState extends State<Home> {
+class HomeState extends State<Home> {
   int _selectedIndex = 1;
   final PageController _pageController = PageController(initialPage: 1);
 

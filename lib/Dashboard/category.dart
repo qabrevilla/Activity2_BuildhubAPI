@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class CategoryPage extends StatefulWidget {
-  const CategoryPage({Key? key}) : super(key: key);
+  const CategoryPage({super.key});
 
   @override
-  _CategoryPageState createState() => _CategoryPageState();
+  CategoryPageState createState() => CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> {
+class CategoryPageState extends State<CategoryPage> {
   final List<String> imgList = [
     'assets/partners/atlanta.png',
     'assets/partners/centurypeak.png',
@@ -64,7 +64,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   // Carousel slider
                   CarouselSlider(
                     options: CarouselOptions(
-                      height: 100, // increase carousel height
+                      height: 100,
                       enlargeCenterPage: true,
                       enableInfiniteScroll: true,
                       autoPlay: true,
@@ -103,9 +103,7 @@ class _CategoryPageState extends State<CategoryPage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: const DecorationImage(
-                        image: AssetImage(
-                          'assets/placeholder_image.png',
-                        ), // Update this asset as needed
+                        image: AssetImage('assets/place the image'),
                         fit: BoxFit.cover,
                       ),
                     ),

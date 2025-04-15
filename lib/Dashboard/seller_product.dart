@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:activity2_api/Dashboard/quickview.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,13 +6,12 @@ import 'package:intl/intl.dart';
 class SellerProduct extends StatefulWidget {
   final dynamic seller;
 
-  const SellerProduct({Key? key, required this.seller}) : super(key: key);
-
+  const SellerProduct({super.key, required this.seller});
   @override
-  _SellerProductState createState() => _SellerProductState();
+  SellerProductState createState() => SellerProductState();
 }
 
-class _SellerProductState extends State<SellerProduct> {
+class SellerProductState extends State<SellerProduct> {
   late List<dynamic> products;
   late List<dynamic> filteredProducts;
   TextEditingController searchController = TextEditingController();
@@ -142,7 +139,7 @@ class _SellerProductState extends State<SellerProduct> {
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withAlpha(51),
                               spreadRadius: 3,
                               blurRadius: 5,
                               offset: const Offset(0, 2),
@@ -435,8 +432,7 @@ class _SellerProductState extends State<SellerProduct> {
                   //View More Button
                   if (_visibleProductCount < filteredProducts.length)
                     Align(
-                      alignment:
-                          Alignment.centerLeft, // Aligns the button to the left
+                      alignment: Alignment.centerLeft,
                       child: TextButton(
                         onPressed: () {
                           setState(() {

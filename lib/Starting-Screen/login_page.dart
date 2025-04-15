@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:activity2_api/Authentication/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   bool rememberMe = false;
   bool isPasswordVisible = false;
   final TextEditingController emailController = TextEditingController();
@@ -38,7 +40,8 @@ class _LoginPageState extends State<LoginPage> {
         passwordController.text,
       );
 
-      debugPrint("API Response: $response"); // Debugging
+      debugPrint("API Response: $response");
+      if (!mounted) return;
 
       if (response['success']) {
         // Show success SnackBar
@@ -139,8 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                           Row(
                             children: [
                               Transform.scale(
-                                scale:
-                                    1.2, // Adjust the scale value to make it bigger or smaller
+                                scale: 1.2,
                                 child: Checkbox(
                                   activeColor: Color.fromRGBO(157, 0, 1, 1.0),
                                   value: rememberMe,
@@ -179,12 +181,13 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       SizedBox(height: 5),
+
+                      //login with facebook button
                       SizedBox(
                         height: 60,
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: //facebookLogin
-                              () {},
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color.fromRGBO(16, 85, 181, 1),
                             shape: RoundedRectangleBorder(
@@ -194,14 +197,8 @@ class _LoginPageState extends State<LoginPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons
-                                    .facebook, // You can use the Facebook icon from the `flutter_icons` package or any custom icon
-                                color: Colors.white,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ), // Add some space between the icon and the text
+                              Icon(Icons.facebook, color: Colors.white),
+                              SizedBox(width: 10),
                               Text(
                                 'Log in with Facebook',
                                 style: TextStyle(

@@ -3,17 +3,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
 class QuickView extends StatefulWidget {
+  const QuickView({super.key, required this.product});
+
   final dynamic product;
 
-  const QuickView({Key? key, required this.product}) : super(key: key);
-
   @override
-  _QuickViewState createState() => _QuickViewState();
+  QuickViewState createState() => QuickViewState();
 }
 
-class _QuickViewState extends State<QuickView> {
+class QuickViewState extends State<QuickView> {
   int quantity = 600;
-  TextEditingController _customQuantityController = TextEditingController();
+  TextEditingController customQuantityController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +209,7 @@ class _QuickViewState extends State<QuickView> {
               ),
               const SizedBox(height: 16),
               TextField(
-                controller: _customQuantityController,
+                controller: customQuantityController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -240,7 +240,7 @@ class _QuickViewState extends State<QuickView> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  quantity = int.tryParse(_customQuantityController.text) ?? 0;
+                  quantity = int.tryParse(customQuantityController.text) ?? 0;
                 });
                 Navigator.pop(context);
               },
