@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:activity2_api/Starting-Screen/splash_screen.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String token;
+  const ProfilePage({super.key, required this.token});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();

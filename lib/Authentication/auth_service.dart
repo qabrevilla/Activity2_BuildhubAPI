@@ -37,23 +37,20 @@ class LoginApi {
 
     try {
       final response = await http.post(url, headers: headers, body: body);
-      // ignore: avoid_print
       print("Response status: ${response.statusCode}");
-      // ignore: avoid_print
       print("Response body: ${response.body}");
 
       final Map<String, dynamic> responseData = json.decode(response.body);
 
       if (response.statusCode == 200) {
         if (responseData.containsKey('token')) {
-          // ignore: avoid_print
           print("Login successful! Token: ${responseData['token']}");
+          AuthManager().setToken(responseData['token']); // store global token
           return {'success': true, 'token': responseData['token']};
         } else {
           return {'success': false, 'message': 'Invalid response from server'};
         }
       } else {
-        // Handle different status codes with specific messages
         switch (response.statusCode) {
           case 422:
             return {
@@ -75,9 +72,27 @@ class LoginApi {
         }
       }
     } catch (e) {
-      // ignore: avoid_print
       print("Login error: $e");
       return {'success': false, 'message': 'Network error: $e'};
     }
+  }
+}
+
+// Token Manager
+class AuthManager {
+  static final AuthManager _instance = AuthManager._internal();
+
+  String? _token;
+
+  factory AuthManager() {
+    return _instance;
+  }
+
+  AuthManager._internal();
+
+  String? get token => _token;
+
+  void setToken(String token) {
+    _token = token;
   }
 }

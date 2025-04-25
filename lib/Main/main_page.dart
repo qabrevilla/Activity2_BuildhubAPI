@@ -5,7 +5,9 @@ import 'package:activity2_api/Orders/orders_page.dart';
 import 'package:activity2_api/Dashboard/home_page.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final String token;
+
+  const MainScreen({super.key, required this.token});
 
   @override
   MainScreenState createState() => MainScreenState();
@@ -14,7 +16,18 @@ class MainScreen extends StatefulWidget {
 class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [Home(), Orders(), Cart(), ProfilePage()];
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      Home(token: widget.token), // Pass token to each page if needed
+      Orders(token: widget.token),
+      Cart(token: widget.token),
+      ProfilePage(token: widget.token),
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -40,7 +53,6 @@ class MainScreenState extends State<MainScreen> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Color.fromRGBO(157, 0, 1, 1.0),
-
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),

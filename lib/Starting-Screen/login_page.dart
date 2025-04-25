@@ -44,14 +44,16 @@ class LoginPageState extends State<LoginPage> {
       if (!mounted) return;
 
       if (response['success']) {
-        // Show success SnackBar
+        final String token = response['token'];
+        debugPrint('Token: $token');
+
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Login successful!')));
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MainScreen()),
+          MaterialPageRoute(builder: (context) => MainScreen(token: token)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -68,7 +70,6 @@ class LoginPageState extends State<LoginPage> {
       body: Center(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // Define smaller screen width threshold
             bool isLargeScreen = constraints.maxWidth > 600;
 
             return Padding(

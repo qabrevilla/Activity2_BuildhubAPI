@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:activity2_api/Authentication/auth_service.dart'; // adjust path if needed
 
 class QuickView extends StatefulWidget {
   const QuickView({super.key, required this.product});
@@ -12,7 +15,7 @@ class QuickView extends StatefulWidget {
 }
 
 class QuickViewState extends State<QuickView> {
-  int quantity = 600;
+  int quantity = 1;
   TextEditingController customQuantityController = TextEditingController();
 
   @override
@@ -26,7 +29,6 @@ class QuickViewState extends State<QuickView> {
       ),
       child: Column(
         children: [
-          // Close Button
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -46,8 +48,6 @@ class QuickViewState extends State<QuickView> {
             ],
           ),
           const SizedBox(height: 10),
-
-          // Scrollable Content
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -91,12 +91,9 @@ class QuickViewState extends State<QuickView> {
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 20),
-                  Text(
+                  const Text(
                     "Quantity",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 5),
                   Row(
@@ -159,8 +156,65 @@ class QuickViewState extends State<QuickView> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        // Add to Cart functionality
+                      onPressed: () async {
+                        final token = AuthManager().token;
+                        if (token == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('User is not logged in.'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        final url = Uri.parse(
+                          'https://api.buildhubware.com/api/v1.1/cart',
+                        );
+                        final headers = {
+                          'Content-Type': 'application/json',
+                          'Authorization': 'Bearer $token',
+                        };
+
+                        final body = jsonEncode({
+                          'data': [
+                            {
+                              'menu_id': widget.product['id'].toString(),
+                              'quantity': quantity,
+                              'variation': '',
+                              'sub_variation_id': '',
+                            },
+                          ],
+                        });
+
+                        try {
+                          final response = await http.post(
+                            url,
+                            headers: headers,
+                            body: body,
+                          );
+
+                          if (response.statusCode == 200 ||
+                              response.statusCode == 201) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Added to cart successfully!'),
+                              ),
+                            );
+                          } else {
+                            final error = jsonDecode(response.body);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Failed to add to cart: ${error['message'] ?? 'Unknown error'}',
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text('Error: $e')));
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromRGBO(157, 0, 1, 1.0),
@@ -188,7 +242,6 @@ class QuickViewState extends State<QuickView> {
     );
   }
 
-  // Show Custom Quantity
   void _showCustomQuantityDialog() {
     showDialog(
       context: context,
@@ -232,9 +285,7 @@ class QuickViewState extends State<QuickView> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: Text('Cancel', style: TextStyle(color: Colors.grey[700])),
             ),
             TextButton(
@@ -244,7 +295,7 @@ class QuickViewState extends State<QuickView> {
                 });
                 Navigator.pop(context);
               },
-              child: Text(
+              child: const Text(
                 'Done',
                 style: TextStyle(color: Color.fromRGBO(157, 0, 1, 1.0)),
               ),
@@ -255,7 +306,6 @@ class QuickViewState extends State<QuickView> {
     );
   }
 
-  // Close Button
   Widget _buildButtonX({required IconData icon, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
@@ -270,7 +320,6 @@ class QuickViewState extends State<QuickView> {
     );
   }
 
-  // Quantity Adjustment Button
   Widget _buildButtonQuantity({
     required IconData icon,
     required VoidCallback onTap,
@@ -289,7 +338,6 @@ class QuickViewState extends State<QuickView> {
     );
   }
 
-  // Quantity Selector Button
   Widget _buildTextButton({
     required String text,
     required bool isSelected,
@@ -306,7 +354,7 @@ class QuickViewState extends State<QuickView> {
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             color: Colors.black,
             fontWeight: FontWeight.bold,

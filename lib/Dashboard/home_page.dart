@@ -5,7 +5,9 @@ import 'package:activity2_api/Dashboard/category.dart';
 import 'package:activity2_api/Text-Style/text_syle.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final String token;
+
+  const Home({super.key, required this.token});
 
   @override
   HomeState createState() => HomeState();

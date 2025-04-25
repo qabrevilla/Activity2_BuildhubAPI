@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Orders extends StatefulWidget {
-  const Orders({super.key});
+  final String token;
+  const Orders({super.key, required this.token});
 
   @override
   State<Orders> createState() => _OrdersState();
