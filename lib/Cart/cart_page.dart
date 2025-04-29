@@ -57,6 +57,7 @@ class _CartState extends State<Cart> {
     }
   }
 
+  //NOT WORKING YET
   Future<void> _deleteSelectedItems() async {
     final headers = {
       'Authorization': 'Bearer ${widget.token}',
@@ -64,7 +65,9 @@ class _CartState extends State<Cart> {
     };
 
     for (var id in selectedItems) {
-      final url = Uri.parse('https://api.buildhubware.com/api/v1.1/cart/$id');
+      final url = Uri.parse(
+        'https://api.buildhubware.com/api/v1.1/cart/$id',
+      ); //ask the backend dev for the correct endpoint
       try {
         final response = await http.delete(url, headers: headers);
         if (response.statusCode != 200 && mounted) {
@@ -302,21 +305,28 @@ class _CartItemWidgetState extends State<CartItemWidget> {
 
     try {
       final response = await http.patch(url, headers: headers, body: body);
+
+      if (!mounted) return;
+
       if (response.statusCode == 200) {
         setState(() {
           quantity = newQuantity;
         });
         widget.onUpdate();
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to update quantity')));
+        _showSnackbar('Failed to update quantity');
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      if (!mounted) return;
+      _showSnackbar('Error: $e');
     }
+  }
+
+  void _showSnackbar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override

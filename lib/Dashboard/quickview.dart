@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:activity2_api/Authentication/auth_service.dart'; // adjust path if needed
+import 'package:activity2_api/Authentication/auth_service.dart';
 
 class QuickView extends StatefulWidget {
   const QuickView({super.key, required this.product});
@@ -156,65 +156,14 @@ class QuickViewState extends State<QuickView> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () async {
+                      onPressed: () {
                         final token = AuthManager().token;
                         if (token == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('User is not logged in.'),
-                            ),
-                          );
+                          _showDialog('User is not logged in.', false);
                           return;
                         }
 
-                        final url = Uri.parse(
-                          'https://api.buildhubware.com/api/v1.1/cart',
-                        );
-                        final headers = {
-                          'Content-Type': 'application/json',
-                          'Authorization': 'Bearer $token',
-                        };
-
-                        final body = jsonEncode({
-                          'data': [
-                            {
-                              'menu_id': widget.product['id'].toString(),
-                              'quantity': quantity,
-                              'variation': '',
-                              'sub_variation_id': '',
-                            },
-                          ],
-                        });
-
-                        try {
-                          final response = await http.post(
-                            url,
-                            headers: headers,
-                            body: body,
-                          );
-
-                          if (response.statusCode == 200 ||
-                              response.statusCode == 201) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Added to cart successfully!'),
-                              ),
-                            );
-                          } else {
-                            final error = jsonDecode(response.body);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Failed to add to cart: ${error['message'] ?? 'Unknown error'}',
-                                ),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text('Error: $e')));
-                        }
+                        _addToCart(token);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromRGBO(157, 0, 1, 1.0),
@@ -239,6 +188,67 @@ class QuickViewState extends State<QuickView> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _addToCart(String token) async {
+    final url = Uri.parse('https://api.buildhubware.com/api/v1.1/cart');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final body = jsonEncode({
+      'data': [
+        {
+          'menu_id': widget.product['id'].toString(),
+          'quantity': quantity,
+          'variation': '',
+          'sub_variation_id': '',
+        },
+      ],
+    });
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+
+      if (!mounted) return;
+
+      print('Response API: $response');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _showDialog('Added to cart successfully!', true);
+      } else {
+        final error = jsonDecode(response.body);
+        _showDialog(
+          'Failed to add to cart: ${error['message'] ?? 'Unknown error'}',
+          false,
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      _showDialog('Error: $e', false);
+    }
+  }
+
+  void _showDialog(String message, bool isSuccess) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(isSuccess ? 'Success' : 'Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Color.fromRGBO(157, 0, 1, 1.0)),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
